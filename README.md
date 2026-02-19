@@ -1,7 +1,7 @@
 # N-Tangled
 Build a word game to entertain the American Heritage faculty and students
 
-## N-Gram portion
+## N-Gram portion - Mike and Jonah
 **Task 1:** Identify word colocations using Google Ngram or local datasets.
 
 **Responsibilities:** 
@@ -20,7 +20,7 @@ A JSON file of words sharing a common bigram prefix and a separate dictionary of
 https://storage.googleapis.com/books/ngrams/books/datasetsv3.html
 https://datamuse.com/
 
-## WordNet portion
+## WordNet portion - Emilee and Gianna
 **Task 2:** Identify polysemous words (words with many meanings or "synsets").
 
 **Responsibilities:** 
@@ -33,7 +33,7 @@ https://datamuse.com/
 **Hints:**
 Use WordNet
 
-## Create four word sets
+## Create four word sets - Jett and Luke
 **Task 3:** The "Connectors." They build the actual sets of four.
 
 **Responsibilities:** 
@@ -45,7 +45,7 @@ Use WordNet
 
 **Deliverable:** A Category class that stores a label and at least one set of four string items.
 
-## Distraction Logic
+## Distraction Logic - Jordan and Carson
 **Task 4:** Find words that could belong to two categories in order to troll our users.
 
 **Responsibilities:** 
@@ -55,7 +55,7 @@ Use WordNet
 
 **Deliverable:** A script that swaps one word from a category with a semantically ambiguous word from the database.
 
-## Game Engine
+## Game Engine - Siyuan and Patrick
 **Task 5:** Set up all the game logic.
 
 **Responsibilities:** 
@@ -65,7 +65,7 @@ Use WordNet
 
 **Deliverable:** A GameSession class that manages the is_correct() logic and state transitions.
 
-## DevOps and UI
+## DevOps and UI - Preston and Finn
 **Task 6:** Manage the GitHub repo and the user's view.
 
 **Responsibilities:** 
