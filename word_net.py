@@ -25,23 +25,26 @@ def find_instances_of_noun_groups(type_of_noun, synsets):
     # Get all the individual synsets
     for synset in synsets:
   
-      # Do we have, say, types of dogs?
-      types_of_stuff = synset.hyponyms()
+        # Do we have, say, types of dogs?
+        types_of_stuff = synset.hyponyms()
 
-      # group_name is the actual word, ignore noun phrases (words with an _)
-      group_name = synset.name().split('.')[0]
+        # group_name is the actual word, ignore noun phrases (words with an _)
+        group_name = synset.name().split('.')[0]
 
-      # Each synset here is a specific instance
-      for specific_synset in types_of_stuff:
+        # Each synset here is a specific instance
+        for specific_synset in types_of_stuff:
       
-        # Get the 'lemma' (the actual word) from the synset
-        names = [lemma.name() for lemma in specific_synset.lemmas()]
+            # Get the 'lemma' (the actual word) from the synset
+            names = [lemma.name() for lemma in specific_synset.lemmas()]
 
-        # Add to the dictionary
-        type_of_noun[synset] = {}
-        type_of_noun[synset]['group_name'] = group_name
-        type_of_noun[synset]['definition'] = specific_synset.definition()
-        type_of_noun[synset]['names'] = names
+	    # There needs to be at least four of these to get a set
+            if len(names) >= 4:
+
+                # Add to the dictionary
+                type_of_noun[synset.name()] = {}
+                type_of_noun[synset.name()]['group_name'] = group_name
+                type_of_noun[synset.name()]['definition'] = specific_synset.definition()
+                type_of_noun[synset.name()]['names'] = names
 
 
 def find_ambiguous_nouns(ambiguous_noun, synsets, threshold):
@@ -52,8 +55,8 @@ def find_ambiguous_nouns(ambiguous_noun, synsets, threshold):
     # How many synsets are there?
     if len(synsets) > threshold:
 
-      # Do something here about these
-      pass
+        # Do something here about these
+        pass
 
 
 
@@ -74,3 +77,5 @@ for word in wn.all_lemma_names(wn.NOUN):
 
     # How about a parent classification for a group of other words?
     find_instances_of_noun_groups(type_of_noun, synsets)
+
+print(json.dumps(type_of_noun, indent = 4))
