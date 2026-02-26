@@ -8,7 +8,8 @@
 
 import json
 import nltk
-nltk.download('wordnet')
+nltk.data.path.append('/Users/bd569421/Downloads/dict')
+#nltk.download('wordnet')
 from nltk.corpus import wordnet as wn
 
 #DATASET_DIR = '/Users/bd569421/Downloads/dict'
