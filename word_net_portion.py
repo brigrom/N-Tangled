@@ -1,20 +1,17 @@
 
-#import os
-#import argparse
-#import random
-#from pathlib import Path
-#import subprocess
-#import pip
-
 import json
 import nltk
 nltk.data.path.append('/Users/bd569421/Downloads/dict')
-#nltk.download('wordnet')
 from nltk.corpus import wordnet as wn
 
-#DATASET_DIR = '/Users/bd569421/Downloads/dict'
 
-#print(wn.synsets('dog'))
+d = {}
+for syns in wn.synsets(your_word):
+    if len(syns.lemma_names()) >= 4:
+        d[syns.name()] = syns.lemma_names()
+        
+
+
 
 def find_instances_of_noun_groups(type_of_noun, synsets):
     """
@@ -80,3 +77,4 @@ for word in wn.all_lemma_names(wn.NOUN):
     find_instances_of_noun_groups(type_of_noun, synsets)
 
 print(json.dumps(type_of_noun, indent = 4))
+
