@@ -1,1 +1,88 @@
-We are on the repo
+"""
+N-Tangled Game Engine
+Developed by: Siyuan and Patrick
+
+This module contains the GameSession class which tracks the 16-word grid,
+the categories, user lives, and selection validation logic.
+"""
+
+Expected input:
+[
+  {"label": "Silver ____", "words": ["Lining", "Spoons", "Bullet", "Mine"]},
+  {"label": "Types of Oil", "words": ["Baby", "Olive", "Motor", "Avocado"]},
+  ...
+]
+
+Expected output: 
+Output (to Task 6):
+
+Success: {"status": "correct", "category": "Silver ____", "remaining_lives": 4}
+
+Near Miss: {"status": "incorrect", "message": "One away!", "remaining_lives": 3}
+
+Failure: {"status": "incorrect", "message": "Try again.", "remaining_lives": 2}
+
+class GameSession:
+    def __init__(self, puzzle_data):
+        """
+        Initializes the game state.
+        
+        :param puzzle_data: A list of 4 dictionaries, each containing 
+                            'category_name' and a list of 4 'words'.
+                            Input comes directly from Task 4.
+        """
+        self.categories = puzzle_data
+        self.all_words = []
+        for cat in self.categories:
+            self.all_words.extend(cat['words'])
+        
+        self.lives = 4
+        self.found_categories = []  # Stores categories already correctly guessed
+        self.grid = self._shuffle_logic()
+        self.game_over = False
+        self.message = "Good luck!"
+
+    def _shuffle_logic(self):
+        """
+        Randomizes the order of words for the 4x4 display.
+        Ensures words aren't displayed in their category groups.
+        """
+        shuffled = list(self.all_words)
+        random.shuffle(shuffled)
+        return shuffled
+
+    def check_selection(self, selected_words):
+        """
+        The core validation logic.
+        
+        :param selected_words: A list of 4 strings selected by the user.
+        :return: (Boolean, String) - Success status and a feedback message.
+        """
+        # 1. Validate if the words match any of the internal categories
+        # 2. If correct: 
+        #    - Add category to self.found_categories
+        #    - Remove words from the active grid
+        # 3. If incorrect:
+        #    - self.lives -= 1
+        #    - Check if "One away!" (3 out of 4 correct)
+        pass
+
+    def get_status(self):
+        """
+        Returns the current state of the game for the UI to render.
+        """
+        return {
+            "grid": self.grid,
+            "lives": self.lives,
+            "found": self.found_categories,
+            "game_over": self.game_over
+        }
+
+def run_cli_test():
+    """
+    A simple command-line interface to allow Siyuan and Patrick 
+    to test the engine logic without needing the Web UI.
+    """
+    print("--- N-Tangled CLI Test Mode ---")
+    # Simulation logic here
+    pass
