@@ -1,0 +1,80 @@
+
+N-Gram Portion
+
+We are responsible for identifying high-frequency word
+collocations using Google Ngrams.
+
+Our code will generate a json of prefix and suffix bigrams
+
+Suffix (e.g., "silver" -> "lining," "spoons," "bullet", "mine")
+Prefix (e.g., "oil" -> "baby", "olive", "motor", "avocado")
+
+These sets of words will eventually be used to generate groups in the final game.
+
+python function stubs below
+
+---
+
+import json
+from collections import defaultdict
+
+class NgramCollocationEngine:
+    def __init__(self):
+        """
+        Input Expected:
+        - Access to Google Ngram datasets (via URL streaming)
+        - A frequency threshold to identify which words should
+         be thrown out or not
+        
+        Output Expected:
+        - A JSON file with two dictionaries: prefix and suffix.
+        - Each "anchor" word maps to a list of lists.
+        - Each sub-list contains 4+ distinct words ordered by frequency
+
+        """
+        self.prefix_data = defaultdict(list)
+        self.suffix_data = defaultdict(list)
+
+    def stream_ngram_data(self, file_indices):
+        """
+        Write scripts to pull Ngram data.
+        
+        This function will connect to the Google Ngram site, stream 
+        files, and decompress them line-by-line to avoid memory overflow from 
+        millions of lines read on my computer.
+        """
+        # TODO: Implement requests.get(stream=True) logic here.
+        # TODO: Implement gzip decompression and tab-separated parsing.
+        
+
+    def identify_collocations(self, line_data, min_frequency):
+        """
+        Identify which bigrams are considered high-frequency.
+        
+        Logic:
+        1. Read bigram: (Word A, Word B).
+        2. Remove extra text in the words (oil_NOUN --> oil)
+        3. Only keep bigrams appearing more than [min_frequency] 
+           relative to the total volume of the dataset (~589 files).
+        """
+        # TODO: Extract Word1, Word2 and Match_Count.
+        # TODO: Store (Word1 --> Word2) in prefix_map.
+        # TODO: Store (Word2 --> Word1) in suffix_map.
+        
+
+    def generate_json(self):
+        """
+        Create the final JSON file with suffixes and prefixes
+        
+        Format:
+        {
+          "prefix": { "anchor": [[word1, word2, word3, word4], [...]] },
+          "suffix": { "anchor": [[word1, word2, word3, word4], [...]] }
+        }
+        
+        Ordering: All lists must be sorted by the frequency of the bigram 
+        (highest to lowest). When the frequency tie, sort alphabetically.
+        """
+        # TODO: Filter anchors to ensure they have at least 4 distinct partners.
+        # TODO: Implement secondary sort (Frequency DESC, Alphabetical ASC).
+        # TODO: Export to 'ngram_collocations.json'.
