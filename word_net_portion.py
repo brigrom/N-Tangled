@@ -1,9 +1,21 @@
 
 import json
-import nltk
-nltk.data.path.append('/Users/bd569421/Downloads/dict')
-from nltk.corpus import wordnet as wn
 
+
+
+#nltk.data.path.append('/Users/bd569421/Downloads/dict')
+#from nltk.corpus import wordnet as wn
+
+words = set()
+
+file_path = '/Users/bd569421/Downloads/dict 2/index.sense'
+with open (file_path, 'r') as file:
+    for line in file:
+        end_index = line.find("%")
+        word = line[:end_index]
+        words.add(word)
+        
+    
 
 d = {}
 for syns in wn.synsets(your_word):
@@ -11,7 +23,8 @@ for syns in wn.synsets(your_word):
         d[syns.name()] = syns.lemma_names()
         
 
-
+# synset: synonym set
+# hyponym: a more specific meaning of a word (spoon is a hyponum of cutlery)
 
 def find_instances_of_noun_groups(type_of_noun, synsets):
     """
