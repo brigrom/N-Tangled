@@ -1,27 +1,63 @@
-
 import json
+import nltk
+nltk.data.path.append('.')
+from nltk.corpus import wordnet as wn
 
 
+def get_all_lemmas():
+    """ Output all words in wordnet """
+    words = set()
 
-#nltk.data.path.append('/Users/bd569421/Downloads/dict')
-#from nltk.corpus import wordnet as wn
-
-words = set()
-
-file_path = '/Users/bd569421/Downloads/dict 2/index.sense'
-with open (file_path, 'r') as file:
-    for line in file:
-        end_index = line.find("%")
-        word = line[:end_index]
-        words.add(word)
-        
+    file_path = 'corpora/wordnet/index.sense'
+    with open (file_path, 'r') as file:
+        for line in file:
+            end_index = line.find("%")
+            word = line[:end_index]
+            words.add(word)
+    return words
     
 
-d = {}
-for syns in wn.synsets(your_word):
-    if len(syns.lemma_names()) >= 4:
-        d[syns.name()] = syns.lemma_names()
+def get_synonymous_terms():
+    """ Create a dictionary of all synonymous terms """
+    
+    # Iterate through all words
+    for word in wn.all_lemma_names():
         
+        # Get all sysnets for this lemma (i.e. the word, e.g. 'bank')
+        synsets = wn.synsets(word)
+
+        # Walk through all synsets
+        for synset in synsets:
+            
+            terms = set()
+
+            # Get the 'lemmas' (the actual word) from the synset
+            lemmas = [lemma.name() for lemma in synset.lemmas()]
+
+            # Ignore any lemma more than one word, i.e. 'zoom_out'
+            for lemma in lemmas:
+
+                # An underscore means multiple words
+                if '_' in lemma:
+                    continue
+
+                terms.add(lemma)
+
+            if len(terms) >= 4:
+                print('\t' + synset.name(), end = ' ')
+                print(terms)
+
+        """
+        TODO:  
+            Remove duplicates, .e.g.
+            occidentalize.v.01 {'occidentalize', 'occidentalise', 'westernise', 'westernize'}
+            occidentalize.v.01 {'occidentalize', 'occidentalise', 'westernise', 'westernize'}
+
+            Remove british varients, e.g. 'westernise', 'westernize'
+
+
+get_synonymous_terms()
+
 
 # synset: synonym set
 # hyponym: a more specific meaning of a word (spoon is a hyponum of cutlery)
@@ -48,7 +84,7 @@ def find_instances_of_noun_groups(type_of_noun, synsets):
             # Get the 'lemma' (the actual word) from the synset
             names = [lemma.name() for lemma in specific_synset.lemmas()]
 
-	    # There needs to be at least four of these to get a set
+            # There needs to be at least four of these to get a set
             if len(names) >= 4:
 
                 # Add to the dictionary
@@ -58,36 +94,23 @@ def find_instances_of_noun_groups(type_of_noun, synsets):
                 type_of_noun[synset.name()]['names'] = names
 
 
-def find_ambiguous_nouns(ambiguous_noun, synsets, threshold):
-    """
-    Store nouns that have multiple senses
-    """
+def get_ambiguous_nouns():
+    """ Create the ambiguous_noun dictionary """
+    ambiguous_nouns = {}
 
-    # How many synsets are there?
-    if len(synsets) > threshold:
+    # Create the type_of_noun dictionary
+    type_of_noun = {}
 
-        # Do something here about these
-        pass
-
-
-
-# Create the ambiguous_noun dictionary
-ambiguous_noun = {}
-
-# Create the type_of_noun dictionary
-type_of_noun = {}
-
-# Iterate through all nouns
-for word in wn.all_lemma_names(wn.NOUN):
+    # Iterate through all nouns
+    for word in wn.all_lemma_names(wn.NOUN):
         
-    # Get all NOUN sysnets for this lemma (i.e. the word, e.g. 'bank')
-    synsets = wn.synsets(word, wn.NOUN)
+        # Get all NOUN sysnets for this lemma (i.e. the word, e.g. 'bank')
+        synsets = wn.synsets(word, wn.NOUN)
 
-    # Is this ambiguous?
-    find_ambiguous_nouns(ambiguous_noun, synsets, 2)
+        # Is this ambiguous?
+        find_ambiguous_nouns(ambiguous_nouns, synsets, 4)
 
-    # How about a parent classification for a group of other words?
-    find_instances_of_noun_groups(type_of_noun, synsets)
+        # How about a parent classification for a group of other words?
+        find_instances_of_noun_groups(type_of_noun, synsets)
 
-print(json.dumps(type_of_noun, indent = 4))
-
+    return json.dumps(type_of_noun, indent = 4)
