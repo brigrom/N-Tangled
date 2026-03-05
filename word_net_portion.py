@@ -2,11 +2,13 @@ import json
 import nltk
 nltk.data.path.append('.')
 from nltk.corpus import wordnet as wn
+#import enchant
 
 
 def get_all_lemmas():
     """ Output all words in wordnet """
     words = set()
+    #en_us = enchant.Dict("en_us")
 
     file_path = 'corpora/wordnet/index.sense'
     with open (file_path, 'r') as file:
@@ -14,8 +16,15 @@ def get_all_lemmas():
             end_index = line.find("%")
             word = line[:end_index]
             words.add(word)
+
+            #if(en_us.check(word) == True):
+                #words.add(word)
     return words
-    
+
+# check for british words
+# a = get_all_lemmas()
+# if (a.contains("Colour")):
+    #print ("did not work")
 
 def get_synonymous_terms():
     """ Create a dictionary of all synonymous terms """
@@ -47,27 +56,27 @@ def get_synonymous_terms():
                 print('\t' + synset.name(), end = ' ')
                 print(terms)
 
-        """
+        """ 
         TODO:  
             Remove duplicates, .e.g.
             occidentalize.v.01 {'occidentalize', 'occidentalise', 'westernise', 'westernize'}
             occidentalize.v.01 {'occidentalize', 'occidentalise', 'westernise', 'westernize'}
 
             Remove british varients, e.g. 'westernise', 'westernize'
-
+            
 
 get_synonymous_terms()
 
 
-# synset: synonym set
-# hyponym: a more specific meaning of a word (spoon is a hyponum of cutlery)
+synset: synonym set
+hyponym: a more specific meaning of a word (spoon is a hyponum of cutlery)
 
 def find_instances_of_noun_groups(type_of_noun, synsets):
-    """
-    Check if a noun synset is a category
-    which has more specific instances
-    dog => poodle, pitbull, ...
-    """
+
+    #Check if a noun synset is a category
+    #which has more specific instances
+    #dog => poodle, pitbull, ...
+
 
     # Get all the individual synsets
     for synset in synsets:
@@ -95,7 +104,7 @@ def find_instances_of_noun_groups(type_of_noun, synsets):
 
 
 def get_ambiguous_nouns():
-    """ Create the ambiguous_noun dictionary """
+     Create the ambiguous_noun dictionary 
     ambiguous_nouns = {}
 
     # Create the type_of_noun dictionary
@@ -114,3 +123,4 @@ def get_ambiguous_nouns():
         find_instances_of_noun_groups(type_of_noun, synsets)
 
     return json.dumps(type_of_noun, indent = 4)
+"""
