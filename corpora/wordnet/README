@@ -1,4 +1,5 @@
-                This is the README file for WordNet 3.0
+
+		This is the README file for WordNet 3.0
 
 1. About WordNet
 
@@ -96,4 +97,5 @@ pre-installed on most Unix systems, and can be downloaded from:
 http://gcc.gnu.org/
 
 See the file INSTALL for detailed WordNet installation instructions.
+
 
