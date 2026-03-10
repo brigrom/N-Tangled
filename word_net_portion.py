@@ -2,32 +2,53 @@ import json
 import nltk
 nltk.data.path.append('.')
 from nltk.corpus import wordnet as wn
-#import enchant
+import enchant
+import re
 
 
 def get_all_lemmas():
     """ Output all words in wordnet """
     words = set()
-    #en_us = enchant.Dict("en_us")
 
     file_path = 'corpora/wordnet/index.sense'
+    british_file_path = 'british_dictionaries/en-GB.dic'
+    american_file_path = 'british_dictionaries/en_US.dic'
+
+
     with open (file_path, 'r') as file:
         for line in file:
             end_index = line.find("%")
             word = line[:end_index]
-            words.add(word)
+            if file_contains(british_file_path, word) == False or (file_contains(british_file_path, word) == True and file_contains(american_file_path, word) == True):
+                words.add(word)
 
             #if(en_us.check(word) == True):
                 #words.add(word)
     return words
 
-# check for british words
-# a = get_all_lemmas()
-# if (a.contains("Colour")):
-    #print ("did not work")
 
+# goes thru british and american dictionaries
+def file_contains(file_path, word):
+    with open (file_path, 'r') as file:
+        for line in file:
+            end_index = len(line)
+            if line.find("/") != -1:
+                end_index = line.find("/")
+            elif line.find("\t"):
+                end_index = line.find("\t")
+            word1 = line[:end_index]
+            if word1 == word:
+                return True
+    return False
+            
+    
+a = get_all_lemmas()
+if (a.contains("colour")):
+    print ("did not work")
+
+"""
 def get_synonymous_terms():
-    """ Create a dictionary of all synonymous terms """
+    Create a dictionary of all synonymous terms
     
     # Iterate through all words
     for word in wn.all_lemma_names():
@@ -56,20 +77,20 @@ def get_synonymous_terms():
                 print('\t' + synset.name(), end = ' ')
                 print(terms)
 
-        """ 
+        
         TODO:  
             Remove duplicates, .e.g.
             occidentalize.v.01 {'occidentalize', 'occidentalise', 'westernise', 'westernize'}
             occidentalize.v.01 {'occidentalize', 'occidentalise', 'westernise', 'westernize'}
 
             Remove british varients, e.g. 'westernise', 'westernize'
-            
+        
 
 get_synonymous_terms()
 
 
-synset: synonym set
-hyponym: a more specific meaning of a word (spoon is a hyponum of cutlery)
+#synset: synonym set
+#hyponym: a more specific meaning of a word (spoon is a hyponum of cutlery)
 
 def find_instances_of_noun_groups(type_of_noun, synsets):
 
