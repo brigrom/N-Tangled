@@ -38,7 +38,7 @@ for syns in wn.synsets(your_word):
 &nbsp;&nbsp;&nbsp;&nbsp;if len(syns.lemma_names()) >= 4:   
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d[syns.name()] = syns.lemma_names()  
 
-## WordNet portion - ???
+## Polysemous words portion - Luke and Jett
 **Task 2.5:** Identify polysemous words (words with many meanings or "synsets").
 
 **Responsibilities:** 
@@ -47,7 +47,7 @@ for syns in wn.synsets(your_word):
 **Deliverable:**   
 A JSON file composed of a dictionary of ambiguous terms, and the synsets belonging to them
 
-## WordNet portion - ???
+## WordNet portion - Patrick and Siyuan
 **Task 2.75:** Build lists of categories
 
 **Responsibilities:** 
