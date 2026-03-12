@@ -1,13 +1,21 @@
 /**
- * N-Tangled Frontend Logic
- * Connected to Python GameSession
+ * N-Tangled Frontend Logic - Static Version (No Python needed!)
  */
 
+// 1. DATA FROM APP.PY (Moved here)
+const puzzleData = [
+    {"label": "Silver ____", "words": ["Lining", "Spoons", "Bullet", "Mine"]},
+    {"label": "Types of Oil", "words": ["Baby", "Olive", "Motor", "Avocado"]},
+    {"label": "Dog Breeds", "words": ["Pug", "Boxer", "Lab", "Poodle"]},
+    {"label": "Furniture", "words": ["Chair", "Table", "Bed", "Sofa"]}
+];
+
 let gameState = {
-    words: [],          // Words currently on the grid
-    selected: [],       // Currently clicked tiles (max 4)
-    solvedCategories: [], // Names of categories already found
-    lives: 4
+    words: [],           // Words currently on the grid
+    selected: [],        // Currently clicked tiles (max 4)
+    solvedCategories: [], // Objects {label: "Name"}
+    lives: 4,
+    gameOver: false
 };
 
 // DOM Elements
@@ -16,42 +24,40 @@ const livesElement = document.getElementById('lives-count');
 const messageElement = document.getElementById('game-message');
 
 /**
- * 1. INITIALIZE GAME
- * Asks the Python server for the starting 16 words.
+ * 2. INITIALIZE GAME
+ * Replaces the old Python fetch with local shuffle logic
  */
-async function initGame() {
-    try {
-        const response = await fetch('/get_game');
-        const data = await response.json();
-        
-        // data.grid comes from your Python GameSession._shuffle_logic()
-        // We map strings to objects so we can track selection state
-        gameState.words = data.grid.map(word => ({
-            text: word,
-            selected: false
-        }));
-        
-        gameState.lives = data.lives;
-        renderGrid();
-    } catch (error) {
-        console.error("Error connecting to Python backend:", error);
-        messageElement.innerText = "Server connection failed.";
-    }
+function initGame() {
+    let allWords = [];
+    puzzleData.forEach(cat => allWords.push(...cat.words));
+    
+    // Shuffle the words
+    allWords.sort(() => Math.random() - 0.5);
+
+    gameState.words = allWords.map(word => ({
+        text: word,
+        selected: false
+    }));
+    
+    gameState.lives = 4;
+    gameState.solvedCategories = [];
+    gameState.selected = [];
+    gameState.gameOver = false;
+    
+    renderGrid();
 }
 
 /**
- * 2. RENDER THE UI
- * Clears the grid and redraws banners + tiles.
+ * 3. RENDER THE UI
  */
 function renderGrid() {
     if (!gridElement) return;
     gridElement.innerHTML = '';
 
-    // A. Draw Solved Banners (Full width)
+    // A. Draw Solved Banners
     gameState.solvedCategories.forEach(category => {
         const banner = document.createElement('div');
         banner.className = 'solved-category-banner';
-        // We set the color in the CSS or dynamically here
         banner.innerText = category.label;
         banner.style.backgroundColor = getCategoryColor(category.label);
         gridElement.appendChild(banner);
@@ -74,9 +80,11 @@ function renderGrid() {
 }
 
 /**
- * 3. SELECTION LOGIC
+ * 4. SELECTION LOGIC
  */
 function toggleTile(wordObj) {
+    if (gameState.gameOver) return;
+
     const index = gameState.selected.indexOf(wordObj);
     if (index > -1) {
         gameState.selected.splice(index, 1);
@@ -87,46 +95,63 @@ function toggleTile(wordObj) {
 }
 
 /**
- * 4. SUBMIT TO PYTHON ENGINE
- * Sends the 4 selected words to Python for validation.
+ * 5. SUBMIT LOGIC (Now Local JS)
+ * This replaces the "async function submitGuess()" that used fetch
  */
-async function submitGuess() {
+function submitGuess() {
+    if (gameState.gameOver) return;
+    
     if (gameState.selected.length !== 4) {
         showMessage("Select 4 words!");
         return;
     }
 
     const selectedTexts = gameState.selected.map(w => w.text);
+    let foundMatch = null;
 
-    try {
-        const response = await fetch('/submit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ selected: selectedTexts })
-        });
+    // Check if selection matches any category
+    for (let cat of puzzleData) {
+        const matches = selectedTexts.filter(word => cat.words.includes(word));
+        if (matches.length === 4) {
+            foundMatch = cat;
+            break;
+        }
+    }
 
-        const result = await response.json(); // The Output from your Task 6 logic
-
-        if (result.status === "correct") {
-            // Remove solved words from the JS grid
-            gameState.words = gameState.words.filter(w => !selectedTexts.includes(w.text));
-            // Add the category label to solved list
-            gameState.solvedCategories.push({ label: result.category });
-            gameState.selected = [];
-            showMessage("Correct!");
-        } else {
-            gameState.lives = result.remaining_lives;
-            showMessage(result.message); // Displays "One away!" or "Try again."
+    if (foundMatch) {
+        // Correct!
+        gameState.words = gameState.words.filter(w => !selectedTexts.includes(w.text));
+        gameState.solvedCategories.push({ label: foundMatch.label });
+        gameState.selected = [];
+        showMessage("Correct!");
+        
+        if (gameState.solvedCategories.length === 4) {
+            gameState.gameOver = true;
+            showMessage("Perfect! You solved it!");
+        }
+    } else {
+        // Incorrect - check for "One Away"
+        gameState.lives -= 1;
+        
+        let isOneAway = false;
+        for (let cat of puzzleData) {
+            const matches = selectedTexts.filter(word => cat.words.includes(word));
+            if (matches.length === 3) {
+                isOneAway = true;
+                break;
+            }
         }
 
-        renderGrid();
-
+        showMessage(isOneAway ? "One away!" : "Try again.");
+        gameState.selected = []; // Optional: Clear selection on wrong answer
+        
         if (gameState.lives <= 0) {
+            gameState.gameOver = true;
             showMessage("Game Over!");
         }
-    } catch (error) {
-        console.error("Submit error:", error);
     }
+
+    renderGrid();
 }
 
 /**
@@ -149,14 +174,16 @@ function getCategoryColor(label) {
 }
 
 function shuffleBoard() {
+    if (gameState.gameOver) return;
     gameState.words.sort(() => Math.random() - 0.5);
     renderGrid();
 }
 
 function deselectAll() {
+    if (gameState.gameOver) return;
     gameState.selected = [];
     renderGrid();
 }
 
-// Kick off the game
+// Start the game
 initGame();
