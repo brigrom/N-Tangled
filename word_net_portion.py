@@ -5,21 +5,25 @@ from nltk.corpus import wordnet as wn
 import enchant
 import re
 
+british_file_path = 'british_dictionaries/en-GB.dic'
+american_file_path = 'british_dictionaries/en_US.dic'
+file_path = 'corpora/wordnet/index.sense'
+british_set = set()
+american_set = set()
 
-def get_all_lemmas():
+def get_all_lemmas(file_path):
     """ Output all words in wordnet """
+    
     words = set()
-
-    file_path = 'corpora/wordnet/index.sense'
-    british_file_path = 'british_dictionaries/en-GB.dic'
-    american_file_path = 'british_dictionaries/en_US.dic'
 
 
     with open (file_path, 'r') as file:
         for line in file:
             end_index = line.find("%")
             word = line[:end_index]
-            if file_contains(british_file_path, word) == False or (file_contains(british_file_path, word) == True and file_contains(american_file_path, word) == True):
+            #if file_contains(british_file_path, word) == False or (file_contains(british_file_path, word) == True and file_contains(american_file_path, word) == True):
+
+            if word in british_set:
                 words.add(word)
 
             #if(en_us.check(word) == True):
@@ -28,7 +32,8 @@ def get_all_lemmas():
 
 
 # goes thru british and american dictionaries
-def file_contains(file_path, word):
+@staticmethod
+def file_contains(file_path, word: str):
     with open (file_path, 'r') as file:
         for line in file:
             end_index = len(line)
@@ -36,14 +41,38 @@ def file_contains(file_path, word):
                 end_index = line.find("/")
             elif line.find("\t"):
                 end_index = line.find("\t")
+
+
             word1 = line[:end_index]
+
             if word1 == word:
                 return True
     return False
-            
+
+
+with open (british_file_path, 'r') as file:
+    for line in file: 
+        end_index = len(line)
+        if line.find("/") != -1:
+            end_index = line.find("/")
+        #elif line.find("\t") != -1:
+            #end_index = line.find("\t")
+
+        
+        
+        word1 = line[:end_index]
+
+        word2 = word1.strip()
+
+        if not file_contains(american_file_path, word2):
+            british_set.add(word2)
+
+
+print(british_set)
     
 a = get_all_lemmas()
-if (a.contains("colour")):
+
+if "colour" in a:
     print ("did not work")
 
 """
