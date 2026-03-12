@@ -1,0 +1,140 @@
+/* 1. Global Styles */
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+    color: #000000;
+    margin: 0;
+    padding-top: 40px;
+}
+
+#game-container {
+    width: 95%;
+    max-width: 450px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 32px;
+    margin-bottom: 5px;
+    font-weight: 700;
+    letter-spacing: -1px;
+}
+
+#game-message {
+    height: 24px;
+    margin: 15px 0;
+    font-weight: 600;
+    color: #000;
+    transition: opacity 0.3s;
+}
+
+#lives-count {
+    margin-bottom: 25px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* 2. The Grid Layout */
+#game-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
+    gap: 8px;
+    margin-bottom: 30px;
+}
+
+/* 3. The Tiles */
+.tile {
+    aspect-ratio: 1 / 1; /* Keeps them perfectly square */
+    background-color: #efefe6;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    user-select: none;
+    transition: background-color 0.1s, transform 0.05s;
+    padding: 5px;
+    text-align: center;
+}
+
+/* Active feedback when clicking */
+.tile:active {
+    transform: scale(0.95);
+}
+
+.tile:hover {
+    background-color: #e2e2d7;
+}
+
+/* Selected state: Dark grey/black */
+.tile.selected {
+    background-color: #5a5a5a;
+    color: white;
+}
+
+/* 4. Solved Category Banners */
+.solved-category-banner {
+    grid-column: span 4; /* Stretches across all 4 columns */
+    height: 80px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 5. Control Buttons */
+.controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+button {
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    border-radius: 25px;
+    padding: 14px 24px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.2s;
+}
+
+button:hover:not(:disabled) {
+    background-color: #f0f0f0;
+}
+
+button:disabled {
+    border-color: #cccccc;
+    color: #cccccc;
+    cursor: not-allowed;
+}
+
+#submit-btn {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+#submit-btn:hover:not(:disabled) {
+    background-color: #333333;
+}
+
+/* 6. Animations */
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}

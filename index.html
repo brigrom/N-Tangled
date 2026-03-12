@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N-Tangled | Connections</title>
+    
+    <link rel="stylesheet" href="style.css">
+     
+</head>
+<body>
+
+    <div id="game-container">
+        <h1>N-Tangled</h1>
+        <p>Group words that share a common thread.</p>
+        
+        <div id="game-message">Good luck!</div>
+        
+        <div id="lives-count">Mistakes remaining: ● ● ● ●</div>
+
+        <div id="game-grid"></div>
+
+        <div class="controls">
+            <button type="button" onclick="shuffleBoard()">Shuffle</button>
+            <button type="button" onclick="deselectAll()">Deselect all</button>
+            <button type="button" id="submit-btn" onclick="submitGuess()">Submit</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
