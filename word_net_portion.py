@@ -3,13 +3,16 @@ import nltk
 nltk.data.path.append('.')
 from nltk.corpus import wordnet as wn
 import enchant
-import re
 
-british_file_path = 'british_dictionaries/en-GB.dic'
-american_file_path = 'british_dictionaries/en_US.dic'
-file_path = 'corpora/wordnet/index.sense'
-british_set = set()
-american_set = set()
+
+british_ise_file_path = 'british_dictionaries/en_GB-ise.dic'
+american_large_file_path = 'british_dictionaries/en_US-large.dic'
+file_path1 = 'corpora/wordnet/index.noun'
+file_path2 = 'corpora/wordnet/index.verb'
+file_path3 = 'corpora/wordnet/index.adj'
+
+british_ise_set=set()
+american_large_set = set()
 
 def get_all_lemmas(file_path):
     """ Output all words in wordnet """
@@ -22,18 +25,17 @@ def get_all_lemmas(file_path):
             end_index = line.find("%")
             word = line[:end_index]
             #if file_contains(british_file_path, word) == False or (file_contains(british_file_path, word) == True and file_contains(american_file_path, word) == True):
-
-            if word in british_set:
+                
+            if word not in only_british_set:
                 words.add(word)
 
-            #if(en_us.check(word) == True):
-                #words.add(word)
     return words
 
+#TO DO: SEPARATE WORDS BY SPACES
 
 # goes thru british and american dictionaries
 @staticmethod
-def file_contains(file_path, word: str):
+def convert_to_set(file_path, set1:set):
     with open (file_path, 'r') as file:
         for line in file:
             end_index = len(line)
@@ -41,16 +43,18 @@ def file_contains(file_path, word: str):
                 end_index = line.find("/")
             elif line.find("\t"):
                 end_index = line.find("\t")
+            else:
+                end_index = line.find(" ")
 
 
             word1 = line[:end_index]
 
-            if word1 == word:
-                return True
-    return False
+            set1.add(word1)
+
+    return set1
 
 
-with open (british_file_path, 'r') as file:
+with open (british_ise_file_path, 'r') as file:
     for line in file: 
         end_index = len(line)
         if line.find("/") != -1:
@@ -64,16 +68,31 @@ with open (british_file_path, 'r') as file:
 
         word2 = word1.strip()
 
-        if not file_contains(american_file_path, word2):
-            british_set.add(word2)
 
 
-print(british_set)
-    
-a = get_all_lemmas()
 
-if "colour" in a:
-    print ("did not work")
+
+british_ise_set = {word.lower() for word in convert_to_set(british_ise_file_path, british_ise_set)}
+american_large_set = {word.lower() for word in convert_to_set(american_large_file_path, american_large_set)}
+
+only_british_set = british_ise_set - american_large_set
+
+
+print(only_british_set)
+
+
+
+a = get_all_lemmas(file_path1)
+b = get_all_lemmas(file_path2)
+c = get_all_lemmas(file_path3)
+
+words = a | b | c
+
+print(words)
+
+
+#if "colour" in a:
+    #print ("did not work")
 
 """
 def get_synonymous_terms():
