@@ -1,21 +1,24 @@
 import json
-import nltk
-nltk.data.path.append('.')
-from nltk.corpus import wordnet as wn
-import enchant
-
+#import nltk
+#nltk.data.path.append('.')
+#from nltk.corpus import wordnet as wn
+#import enchant
 
 british_ise_file_path = 'british_dictionaries/en_GB-ise.dic'
 american_large_file_path = 'british_dictionaries/en_US-large.dic'
-file_path1 = 'corpora/wordnet/index.noun'
-file_path2 = 'corpora/wordnet/index.verb'
-file_path3 = 'corpora/wordnet/index.adj'
+noun_file_path = 'corpora/wordnet/index.noun'
+verb_file_path = 'corpora/wordnet/index.verb'
+adj_file_path = 'corpora/wordnet/index.adj'
 
 british_ise_set=set()
 american_large_set = set()
+adj_set = set()
+noun_set = set()
+verb_set = set()
 
+""" do we need this? the sets are the exact same without it
 def get_all_lemmas(file_path):
-    """ Output all words in wordnet """
+    Output all words in wordnet 
     
     words = set()
 
@@ -30,30 +33,35 @@ def get_all_lemmas(file_path):
                 words.add(word)
 
     return words
+"""
 
-#TO DO: SEPARATE WORDS BY SPACES
-
-# goes thru british and american dictionaries
+# reads through a file and generates a list of words from it
 @staticmethod
-def convert_to_set(file_path, set1:set):
+def convert_to_set(file_path, set:set):
     with open (file_path, 'r') as file:
         for line in file:
             end_index = len(line)
+
+            # for the US dictionary
             if line.find("/") != -1:
                 end_index = line.find("/")
-            elif line.find("\t"):
+
+            # for the UK dictionary
+            elif line.find("\t") != -1:
                 end_index = line.find("\t")
-            else:
-                end_index = line.find(" ")
+
+            # for the wordnet dictionaries
+            elif line.find(" ") != -1:
+                end_index = line.find(" ") 
 
 
-            word1 = line[:end_index]
+            word = line[:end_index]
 
-            set1.add(word1)
+            set.add(word)
 
-    return set1
+    return set
 
-
+""" do we need this? the sets are the exact samae without it
 with open (british_ise_file_path, 'r') as file:
     for line in file: 
         end_index = len(line)
@@ -67,32 +75,33 @@ with open (british_ise_file_path, 'r') as file:
         word1 = line[:end_index]
 
         word2 = word1.strip()
+"""
 
 
 
-
-
+# convert the US and UK files to sets, then lowercase every word in them
 british_ise_set = {word.lower() for word in convert_to_set(british_ise_file_path, british_ise_set)}
 american_large_set = {word.lower() for word in convert_to_set(american_large_file_path, american_large_set)}
 
+# create a set with only british words
 only_british_set = british_ise_set - american_large_set
 
 
-print(only_british_set)
+# create sets fpr all of the adjectives, nouns, and verbs
+adj_set = convert_to_set(adj_file_path, adj_set)
+noun_set = convert_to_set(noun_file_path, noun_set)
+verb_set = convert_to_set(verb_file_path, verb_set)
+
+# combine them to create a final set
+words = adj_set | noun_set | verb_set
+
+
+# get rid of the british words from that final set
+words = words - only_british_set
 
 
 
-a = get_all_lemmas(file_path1)
-b = get_all_lemmas(file_path2)
-c = get_all_lemmas(file_path3)
 
-words = a | b | c
-
-print(words)
-
-
-#if "colour" in a:
-    #print ("did not work")
 
 """
 def get_synonymous_terms():
